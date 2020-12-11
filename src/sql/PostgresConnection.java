@@ -5,11 +5,6 @@ import java.util.*;
 
 public class PostgresConnection {
 
-    private static String serveur = "localhost";
-    private static String baseName = "projet";
-    private static String user = "thomas";
-    private static String password = "postgres";
-
     private static Connection connection;
 
     public static Connection getInstance() {
