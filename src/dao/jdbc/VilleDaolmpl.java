@@ -57,12 +57,13 @@ public class VilleDaolmpl extends JdbcDao{
     public void create(Entity entity) throws DaoException {
         Ville ville = (Ville) entity;
         PreparedStatement stmt= null;
-        String sqlReq = "insert into VILLE(nomVille, nombreHabitants) values (?,?)";
+        String sqlReq = "insert into VILLE(idVille,nomVille, nombreHabitants) values (?,?,?)";
 
         try {
             stmt = connection.prepareStatement(sqlReq);
-            stmt.setString(1, ville.getNomVille());
-            stmt.setInt(2, ville.getNombreHabitsants());
+            stmt.setInt(1, ville.getIdVille());
+            stmt.setString(2, ville.getNomVille());
+            stmt.setInt(3, ville.getNombreHabitsants());
 
             int res = stmt.executeUpdate();
             if (res > 0) {

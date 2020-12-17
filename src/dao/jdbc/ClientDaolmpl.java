@@ -62,14 +62,15 @@ public class ClientDaolmpl extends JdbcDao{
     public void create(Entity entity) throws DaoException {
         Client client = (Client) entity;
         PreparedStatement stmt= null;
-        String sqlReq = "insert into ClIENT(nomClient, adresseClient, codePostalClient, idVille) values (?,?,?,?)";
+        String sqlReq = "insert into ClIENT(idClient,nomClient, adresseClient, codePostalClient, idVille) values (?,?,?,?,?)";
 
         try {
             stmt = connection.prepareStatement(sqlReq);
-            stmt.setString(1, client.getNomClient());
-            stmt.setString(2, client.getAdresseClient());
-            stmt.setInt(3, client.getCodePostalClient());
-            stmt.setInt(4, client.getIdVille());
+            stmt.setInt(1, client.getIdClient());
+            stmt.setString(2, client.getNomClient());
+            stmt.setString(3, client.getAdresseClient());
+            stmt.setInt(4, client.getCodePostalClient());
+            stmt.setInt(5, client.getIdVille());
 
             int res = stmt.executeUpdate();
             if (res > 0) {

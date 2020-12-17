@@ -56,11 +56,12 @@ public class MarqueDaolmpl extends JdbcDao{
     public void create(Entity entity) throws DaoException {
         Marque marque = (Marque) entity;
         PreparedStatement stmt= null;
-        String sqlReq = "insert into Marque(nomMarque) values (?)";
+        String sqlReq = "insert into Marque(idMarque,nomMarque) values (?,?)";
 
         try {
             stmt = connection.prepareStatement(sqlReq);
-            stmt.setString(1, marque.getNomMarque());
+            stmt.setInt(1, marque.getIdMarque());
+            stmt.setString(2, marque.getNomMarque());
 
             int res = stmt.executeUpdate();
             if (res > 0) {

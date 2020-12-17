@@ -74,20 +74,21 @@ public class VehiculeDaolmpl extends JdbcDao{
     public void create(Entity entity) throws DaoException {
         Vehicule vehicule = (Vehicule) entity;
         PreparedStatement stmt= null;
-        String sqlReq = "insert into VEHICULE(dateMiseEnCirculation, état, nbKilomètres, prixParJourDeLocation, idMarque, idModèle, idCatégorie, idType, idAgence) values (?,?,?,?,?,?,?,?,?)";
+        String sqlReq = "insert into VEHICULE(immatriculation,dateMiseEnCirculation, état, nbKilomètres, prixParJourDeLocation, idMarque, idModèle, idCatégorie, idType, idAgence) values (?,?,?,?,?,?,?,?,?,?)";
 
         try {
             Date date= Date.valueOf(vehicule.getDateMiseEnCirculation());
             stmt = connection.prepareStatement(sqlReq);
-            stmt.setDate(1, date);
-            stmt.setString(2, vehicule.getÉtat());
-            stmt.setInt(3, vehicule.getNbKilomètres());
-            stmt.setInt(4, vehicule.getPrixParJourDeLocation());
-            stmt.setInt(5, vehicule.getIdMarque());
-            stmt.setInt(6, vehicule.getIdModèle());
-            stmt.setInt(7, vehicule.getIdCatégorie());
-            stmt.setInt(8, vehicule.getIdType());
-            stmt.setInt(9, vehicule.getIdAgence());
+            stmt.setInt(1, vehicule.getImmatriculation());
+            stmt.setDate(2, date);
+            stmt.setString(3, vehicule.getÉtat());
+            stmt.setInt(4, vehicule.getNbKilomètres());
+            stmt.setInt(5, vehicule.getPrixParJourDeLocation());
+            stmt.setInt(6, vehicule.getIdMarque());
+            stmt.setInt(7, vehicule.getIdModèle());
+            stmt.setInt(8, vehicule.getIdCatégorie());
+            stmt.setInt(9, vehicule.getIdType());
+            stmt.setInt(10, vehicule.getIdAgence());
 
             int res = stmt.executeUpdate();
             if (res > 0) {

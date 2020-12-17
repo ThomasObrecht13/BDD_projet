@@ -58,12 +58,13 @@ public class AgenceDaolmpl extends JdbcDao{
     public void create(Entity entity) throws DaoException {
         Agence agence = (Agence) entity;
         PreparedStatement stmt= null;
-        String sqlReq = "insert into AGENCE(nbEmployés, idVille) values (?,?)";
+        String sqlReq = "insert into AGENCE(idAgence,nbEmployés, idVille) values (?,?,?)";
 
         try {
             stmt = connection.prepareStatement(sqlReq);
-            stmt.setInt(1, agence.getNbEmployés());
-            stmt.setInt(2, agence.getIdVille());
+            stmt.setInt(1, agence.getIdAgence());
+            stmt.setInt(2, agence.getNbEmployés());
+            stmt.setInt(3, agence.getIdVille());
 
             int res = stmt.executeUpdate();
             if (res > 0) {
