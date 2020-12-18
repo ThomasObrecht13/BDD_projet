@@ -3,7 +3,7 @@ package dao.jdbc;
 import dao.exception.DaoException;
 import dao.jdbc.JdbcDao;
 import model.Entity;
-
+import model.Contrat;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
