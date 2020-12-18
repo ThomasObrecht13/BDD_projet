@@ -15,11 +15,11 @@ class ConnectionTest {
         requeteQuatre(conn);
         requeteCinq(12,conn);
         requeteSix(conn);
-        requeteSept(0,"2020-12-20", conn);
+        requeteSept(1,2020, conn);
         requeteHuit(conn);
         requeteNeuf(conn);
-        requeteDix(conn);
-        requeteOnze("2020-12-20", conn);
+        requeteDix(2020,conn);
+        requeteOnze(2020, conn);
         conn.close();
     }
 
@@ -31,7 +31,7 @@ class ConnectionTest {
                     " INNER JOIN VEHICULE as V ON V.immatriculation=CO.immatriculation"+
                     " INNER JOIN AGENCE as A ON A.idAgence=V.idAgence INNER JOIN CLIENT As CI ON CI.idClient=CO.idClient"+
                     " INNER JOIN FACTURE as F ON CO.idContrat=F.idContrat INNER JOIN MARQUE as M ON V.idMarque=M.idMarque"+
-                    " WHERE V.idAgence!=CO.idAgenceRetour AND CO.idClient="+idClient+" AND CO.dateDeRetrait='"+date+"' AND date_mii(CO.dateDeRetrait,"+-duree+")=CO.dateDeRetour;";
+                    " WHERE V.idAgence!=CO.idAgenceDeRetour AND CO.idClient="+idClient+" AND CO.dateDeRetrait='"+date+"' AND date_mii(CO.dateDeRetrait,"+-duree+")=CO.dateDeRetour;";
 
             ResultSet res= statement.executeQuery(sqlReq);
             while(res.next()){
@@ -127,13 +127,18 @@ class ConnectionTest {
         }
     }
 
-    public  static  void requeteSept(int idAgence, String date,Connection conn) throws  SQLException{
+    public  static  void requeteSept(int idAgence, int annee, Connection conn) throws  SQLException{
         Statement statement = conn.createStatement();
 
         try {
-            String sqlReq ="SELECT CLIENT.nomClient, MAX(COUNT(CLIENT.idClient)) as nbLocation FROM CLIENT INNER JOIN CONTRAT" +
-                    "ON CLIENT.idClient = CONTRAT.idClient WHERE CONTRAT.idAgence =" + idAgence + " AND " +
-                    "CONTRAT.dateRetrait LIKE " + date + "% ;";
+            String sqlReq = "SELECT CLIENT.nomClient,  count(CONTRAT.idContrat) AS nbLocation FROM FACTURE" +
+                    " INNER JOIN CONTRAT ON CONTRAT.idContrat = FACTURE.idContrat"+
+                    " INNER JOIN VEHICULE ON VEHICULE.immatriculation = CONTRAT.immatriculation"+
+                    " INNER JOIN AGENCE ON VEHICULE.idAgence = AGENCE.idAgence"+
+                    " INNER JOIN CLIENT ON CLIENT.idClient = CONTRAT.idClient"+
+                    " WHERE CONTRAT.idAgenceDeRetour =" + idAgence + " AND " +
+                    " to_char(CONTRAT.dateDeRetrait, 'YYYY')='"+annee+"' GROUP BY CLIENT.nomclient"+
+                    " order by nbLocation DESC LIMIT 1;";
             ResultSet res = statement.executeQuery(sqlReq);
 
             while (res.next()){
@@ -152,11 +157,11 @@ class ConnectionTest {
         Statement statement = conn.createStatement();
 
         try {
-            String sqlReq = " SELECT COUNT(FACTURE.montant) as chiffreAffaire, CATEGORIE.libelléCatégorie FROM CONTRAT" +
-                    "INNER JOIN FACTURE ON CONTRAT.idFacture = FACTURE.idFacture"+
-                    "INNER JOIN VEHICULE ON CONTRAT.immatriculation = VEHICULE.immatriculation" +
-                    "INNER JOIN CATEGORIE ON VEHICULE.idCatégorie = CATAGORIE.idCatégorie"+
-                    "GROUP BY CATEGORIE.libelléCatégorie;";
+            String sqlReq = "SELECT SUM(FACTURE.montant) as chiffreAffaire, CATEGORIE.libelléCatégorie FROM CONTRAT"+
+            " INNER JOIN FACTURE ON CONTRAT.idContrat = FACTURE.idContrat"+
+            " INNER JOIN VEHICULE ON CONTRAT.immatriculation = VEHICULE.immatriculation"+
+            " INNER JOIN CATEGORIE ON VEHICULE.idCatégorie = CATEGORIE.idCatégorie"+
+            " GROUP BY CATEGORIE.idCatégorie;";
             ResultSet res = statement.executeQuery(sqlReq);
 
             while(res.next()){
@@ -173,11 +178,11 @@ class ConnectionTest {
         Statement statement = conn.createStatement();
 
         try {
-            String sqlReq = " SELECT COUNT(FACTURE.montant) as chiffreAffaire, TYPE.libelléType FROM CONTRAT" +
-                    "INNER JOIN FACTURE ON CONTRAT.idFacture = FACTURE.idFacture"+
-                    "INNER JOIN VEHICULE ON CONTRAT.immatriculation = VEHICULE.immatriculation" +
-                    "INNER JOIN TYPE ON VEHICULE.idType = TYPE.idType"+
-                    "GROUP BY TYPE.idType;";
+            String sqlReq = " SELECT SUM(FACTURE.montant) as chiffreAffaire, TYPE.libelléType FROM CONTRAT" +
+                    " INNER JOIN FACTURE ON CONTRAT.idContrat = FACTURE.idContrat"+
+                    " INNER JOIN VEHICULE ON CONTRAT.immatriculation = VEHICULE.immatriculation" +
+                    " INNER JOIN TYPE ON VEHICULE.idType = TYPE.idType"+
+                    " GROUP BY TYPE.idType;";
             ResultSet res = statement.executeQuery(sqlReq);
 
             while(res.next()){
@@ -190,40 +195,41 @@ class ConnectionTest {
         }
     }
 
-    public static void requeteDix(Connection conn) throws SQLException{
+    public static void requeteDix(int annee,Connection conn) throws SQLException{
         Statement statement = conn.createStatement();
 
         try {
-            String sqlReq = " SELECT COUNT(VEHICULE.idVehicule),  VEHICULE.idAgence FROM VEHICULE" +
-                    "WHERE VEHICULE.nbKilomètres >= 150000 AND (VEHICULE.dateMiseEnCirculation NOT LIKE '2020%' " +
-                    "OR VEHICULE.dateMiseEnCirculation NOT LIKE '2019%')"+
-                    "GROUP BY VEHICULE.idAgence;";
+            String sqlReq = " SELECT COUNT(VEHICULE.immatriculation)as nbVoiture,  VEHICULE.idAgence FROM VEHICULE" +
+                    " WHERE VEHICULE.nbKilomètres >= 150000 " +
+                    "AND to_char(VEHICULE.dateMiseEnCirculation, 'YYYY')!='"+(annee-1)+"'AND" +
+                    " to_char(VEHICULE.dateMiseEnCirculation, 'YYYY')!='"+(annee-2)+"'GROUP BY VEHICULE.idAgence;";
             ResultSet res = statement.executeQuery(sqlReq);
 
             while(res.next()){
                 int nbVoiture= res.getInt("nbVoiture");
                 int idAgence = res.getInt("idAgence");
 
-                System.out.println(idAgence + ": " + nbVoiture + "usagées");
+                System.out.println(idAgence + ": " + nbVoiture + " usagées");
             }        }catch(SQLException e) {
             System.err.println("Erreur SQL : " + e.getLocalizedMessage());
         }
     }
 
-    public static void requeteOnze(String date, Connection conn) throws SQLException{
+    public static void requeteOnze(int annee, Connection conn) throws SQLException{
         Statement statement = conn.createStatement();
 
         try {
-            String sqlReq = " SELECT COUNT(FACTURE.montant),  CONTRAT.idAgence FROM FACTURE" +
-                    "INNER JOIN CONTRAT ON FACTURE.idContrat = CONTRAT.idContrat"+
-                    "WHERE CONTRAT.dateDeRetrait LIKE" + date +"% GROUP BY CONTRAT.idAgence;";
+            String sqlReq = " SELECT SUM(FACTURE.montant) as chiffreAffaires,  CONTRAT.idAgenceDeRetour FROM FACTURE" +
+                    " INNER JOIN CONTRAT ON FACTURE.idContrat = CONTRAT.idContrat"+
+                    " INNER JOIN AGENCE ON CONTRAT.idAgenceDeRetour = AGENCE.idAgence"+
+                    " WHERE to_char(CONTRAT.dateDeRetrait, 'YYYY')='"+annee+"' GROUP BY CONTRAT.idAgenceDeRetour;";
             ResultSet res = statement.executeQuery(sqlReq);
 
             while(res.next()){
-                int chiffreAffaire = res.getInt("chiffreAffaire");
-                int idAgence = res.getInt("idAgence");
+                int chiffreAffaire = res.getInt("chiffreAffaires");
+                int idAgence = res.getInt("idAgenceDeRetour");
 
-                System.out.println(idAgence + ": " + chiffreAffaire + " en " + date);
+                System.out.println(idAgence + ": " + chiffreAffaire + " en " + annee);
             }        }catch(SQLException e) {
             System.err.println("Erreur SQL : " + e.getLocalizedMessage());
         }

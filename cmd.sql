@@ -81,11 +81,11 @@ CREATE TABLE CONTRAT(
     kmRetour int,
     idClient int,
     immatriculation int,
-    idAgenceRetour int,
+    idAgencedeRetour int,
     PRIMARY KEY (idContrat),
     FOREIGN KEY (idClient) REFERENCES CLIENT(idClient),
     FOREIGN KEY (immatriculation) REFERENCES VEHICULE(immatriculation),
-    FOREIGN KEY (idAgenceRetour) REFERENCES AGENCE(idAgence)
+    FOREIGN KEY (idAgencedeRetour) REFERENCES AGENCE(idAgence)
 );
 CREATE TABLE FACTURE(
     idFacture serial NOT NULL,
@@ -132,7 +132,7 @@ SELECT CO.idContrat, M.nomMarque, F.montant, CO.dateDeRetrait, CO.dateDeRetour  
     INNER JOIN VEHICULE as V ON V.immatriculation=CO.immatriculation
     INNER JOIN AGENCE as A ON A.idAgence=V.idAgence INNER JOIN CLIENT As CI ON CI.idClient=CO.idClient
     INNER JOIN FACTURE as F ON CO.idContrat=F.idContrat INNER JOIN MARQUE as M ON V.idMarque=M.idMarque
-    WHERE V.idAgence!=CO.idAgenceRetour AND CO.idClient=0 AND CO.dateDeRetrait='10/12/2020' AND date_mii(CO.dateDeRetrait,-2)=CO.dateDeRetour;
+    WHERE V.idAgence!=CO.idAgenceDeRetour AND CO.idClient=0 AND CO.dateDeRetrait='10/12/2020' AND date_mii(CO.dateDeRetrait,-2)=CO.dateDeRetour;
 
 /*requete 3*/
 SELECT dateDeRetour FROM CONTRAT WHERE idContrat = (SELECT idContrat FROM CONTRAT ORDER BY idContrat DESC LIMIT 1);
@@ -150,4 +150,38 @@ SELECT A.idAgence,SUM(F.montant) as chiffreAffaires FROM FACTURE as F
 SELECT M.nomMarque,COUNT(V.immatriculation) as nbVehicule FROM VEHICULE as V INNER JOIN MARQUE as M
     ON V.idMarque=M.idMarque GROUP BY M.idMarque;
 
+/*requete 7*/
+SELECT CLIENT.nomClient,  count(CONTRAT.idContrat) AS nbLocation FROM FACTURE
+    INNER JOIN CONTRAT ON CONTRAT.idContrat = FACTURE.idContrat
+    INNER JOIN VEHICULE ON VEHICULE.immatriculation = CONTRAT.immatriculation
+    INNER JOIN AGENCE ON VEHICULE.idAgence = AGENCE.idAgence
+    INNER JOIN CLIENT ON CLIENT.idClient = CONTRAT.idClient
+    WHERE CONTRAT.idAgenceDeRetour =1 AND
+    to_char(CONTRAT.dateDeRetrait, 'YYYY')='2020' GROUP BY CLIENT.nomclient
+    order by nbLocation DESC LIMIT 1;
 
+/*requete 8*/
+SELECT SUM(FACTURE.montant) as chiffreAffaire, CATEGORIE.libelléCatégorie FROM CONTRAT
+    INNER JOIN FACTURE ON CONTRAT.idContrat = FACTURE.idContrat
+    INNER JOIN VEHICULE ON CONTRAT.immatriculation = VEHICULE.immatriculation
+    INNER JOIN CATEGORIE ON VEHICULE.idCatégorie = CATEGORIE.idCatégorie
+    GROUP BY CATEGORIE.idCatégorie;
+
+ /*requete 9*/
+SELECT SUM(FACTURE.montant) as chiffreAffaire, TYPE.libelléType FROM CONTRAT
+    INNER JOIN FACTURE ON CONTRAT.idContrat = FACTURE.idContrat
+    INNER JOIN VEHICULE ON CONTRAT.immatriculation = VEHICULE.immatriculation
+    INNER JOIN TYPE ON VEHICULE.idType = TYPE.idType
+    GROUP BY TYPE.idType;
+
+/*requete 10*/
+SELECT COUNT(VEHICULE.immatriculation)as nbVoiture,  VEHICULE.idAgence FROM VEHICULE
+    WHERE VEHICULE.nbKilomètres >= 150000
+    AND to_char(VEHICULE.dateMiseEnCirculation, 'YYYY')!='2019'AND
+    to_char(VEHICULE.dateMiseEnCirculation, 'YYYY')!='2018'GROUP BY VEHICULE.idAgence;
+
+/*requete 11*/
+SELECT SUM(FACTURE.montant) as chiffreAffaires,  CONTRAT.idAgenceDeRetour FROM FACTURE
+    INNER JOIN CONTRAT ON FACTURE.idContrat = CONTRAT.idContrat
+    INNER JOIN AGENCE ON CONTRAT.idAgenceDeRetour = AGENCE.idAgence
+    WHERE to_char(CONTRAT.dateDeRetrait, 'YYYY')='2020' GROUP BY CONTRAT.idAgenceDeRetour;
