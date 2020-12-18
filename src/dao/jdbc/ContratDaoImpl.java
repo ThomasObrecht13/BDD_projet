@@ -107,8 +107,8 @@ public class ContratDaoImpl extends JdbcDao {
             String sqlReq = "UPDATE CONTRAT SET dateDeRetrait = '" +
                     dateRetrait + "', dateDeRetour ='" +
                     dateRetour + "',kmRetrait =" +
-                    contrat.getDateRetrait() + ",kmRetour =" +
-                    contrat.getDateRetour() + ",idClient = "+
+                    contrat.getKmRetrait() + ",kmRetour =" +
+                    contrat.getKmRetour() + ",idClient = "+
                     contrat.getIdClient() + ",immatriculation =" +
                     contrat.getImmatriculation() + ",idAgenceDeRetour ="+
                     contrat.getIdAgenceRetour() +

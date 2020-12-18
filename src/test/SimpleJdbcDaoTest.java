@@ -490,6 +490,8 @@ public class SimpleJdbcDaoTest {
         System.out.println("***** Liste des Type : ");
         findAllType();
 
+        System.out.println(" ");
+
         System.out.println("********** Test Catégorie  **********");
         dao = new CategorieDaoImpl(connection);
         System.out.println("***** Création d'une Catégorie : ");
@@ -544,6 +546,8 @@ public class SimpleJdbcDaoTest {
         deleteContrat(new_contrat);
         System.out.println("***** Liste des Contrat : ");
         findAllContrat();
+
+        System.out.println(" ");
 
         System.out.println("********** Test Facture  **********");
         dao = new FactureDaoImpl(connection);
