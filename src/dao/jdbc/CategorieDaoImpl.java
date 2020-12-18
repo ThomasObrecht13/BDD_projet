@@ -81,8 +81,8 @@ public class CategorieDaoImpl extends JdbcDao {
         try {
 
 
-            String sqlReq = "UPDATE CATEGORIE SET libelléCatégorie = " +
-                    catégorie.getLibelléCatégorie() + " WHERE idCatégorie = " + catégorie.getIdCatégorie();
+            String sqlReq = "UPDATE CATEGORIE SET libelléCatégorie = '" +
+                    catégorie.getLibelléCatégorie() + "' WHERE idCatégorie = " + catégorie.getIdCatégorie();
 
             int res = statement.executeUpdate(sqlReq);
 

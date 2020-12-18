@@ -108,7 +108,7 @@ public class ClientDaolmpl extends JdbcDao{
             String sqlReq = "DELETE FROM CLIENT WHERE idClient="+client.getIdClient();
             int res = statement.executeUpdate(sqlReq);
             if (res > 0) {
-                System.out.println("agence : n°"+client.getIdVille()+" supprimé");
+                System.out.println("client : n°"+client.getIdVille()+" supprimé");
             }
         } catch(SQLException e) {
             System.err.println("Erreur SQL : " + e.getLocalizedMessage());

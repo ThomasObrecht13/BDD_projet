@@ -25,13 +25,13 @@ public class ContratDaoImpl extends JdbcDao {
             while (resultSet.next()) {
                 Contrat contrat = new Contrat();
                 contrat.setIdContrat(resultSet.getInt("idContrat"));
-                contrat.setDateRetrait(resultSet.getString("dateRetrait"));
-                contrat.setDateRetour(resultSet.getString("dateRetour"));
+                contrat.setDateRetrait(resultSet.getString("dateDeRetrait"));
+                contrat.setDateRetour(resultSet.getString("dateDeRetour"));
                 contrat.setKmRetrait(resultSet.getInt("kmRetrait"));
                 contrat.setKmRetour(resultSet.getInt("kmRetour"));
                 contrat.setIdClient(resultSet.getInt("idClient"));
                 contrat.setImmatriculation(resultSet.getInt("immatriculation"));
-                contrat.setIdAgenceRetour(resultSet.getInt("idAgence"));
+                contrat.setIdAgenceRetour(resultSet.getInt("idAgenceDeRetour"));
                 contrats.add(contrat);
             }
         } catch (SQLException e) {
@@ -51,13 +51,13 @@ public class ContratDaoImpl extends JdbcDao {
             while (resultSet.next()) {
 
                 contrat.setIdContrat(resultSet.getInt("idContrat"));
-                contrat.setDateRetrait(resultSet.getString("dateRetrait"));
-                contrat.setDateRetour(resultSet.getString("dateRetour"));
+                contrat.setDateRetrait(resultSet.getString("dateDeRetrait"));
+                contrat.setDateRetour(resultSet.getString("dateDeRetour"));
                 contrat.setKmRetrait(resultSet.getInt("kmRetrait"));
                 contrat.setKmRetour(resultSet.getInt("kmRetour"));
                 contrat.setIdClient(resultSet.getInt("idClient"));
                 contrat.setImmatriculation(resultSet.getInt("immatriculation"));
-                contrat.setIdAgenceRetour(resultSet.getInt("idAgence"));
+                contrat.setIdAgenceRetour(resultSet.getInt("idAgenceDeRetour"));
             }
         } catch (SQLException e) {
             throw new DaoException(e);
@@ -68,13 +68,16 @@ public class ContratDaoImpl extends JdbcDao {
     public void create(Entity entity) throws DaoException {
         Contrat contrat = (Contrat) entity;
         PreparedStatement statement = null;
-        String sqlReq = "insert into CONTRAT(idContrat , dateDeRetrait, dateDeRetour, kmRetrait, kmRetour, idClient, immatriculation, idAgenceRetour ) values(?,?,?,?,?,?,?,?,?)";
+        String sqlReq = "insert into CONTRAT(idContrat , dateDeRetrait, dateDeRetour, kmRetrait, kmRetour, idClient, immatriculation, idAgenceDeRetour ) values(?,?,?,?,?,?,?,?)";
 
         try {
+            Date dateRetrait= Date.valueOf((String)contrat.getDateRetrait());
+            Date dateRetour= Date.valueOf((String)contrat.getDateRetour());
+
             statement = connection.prepareStatement(sqlReq);
             statement.setInt(1, contrat.getIdContrat());
-            statement.setString(2, contrat.getDateRetrait());
-            statement.setString(3,contrat.getDateRetour());
+            statement.setDate(2, dateRetrait);
+            statement.setDate(3,dateRetour);
             statement.setInt(4, contrat.getKmRetour());
             statement.setInt(5, contrat.getKmRetrait());
             statement.setInt(6, contrat.getIdClient());
@@ -98,15 +101,16 @@ public class ContratDaoImpl extends JdbcDao {
         Statement statement = connection.createStatement();
 
         try {
+            Date dateRetrait= Date.valueOf(contrat.getDateRetrait());
+            Date dateRetour= Date.valueOf(contrat.getDateRetour());
 
-
-            String sqlReq = "UPDATE CONTRAT SET dateDeRetrait = " +
-                    contrat.getDateRetrait() + ", dateDeRetour =" +
-                    contrat.getDateRetour() + ",kmRetrait =" +
-                    contrat.getDateRetrait() + ",kmRetour" +
-                    contrat.getDateRetour() + "idClient = "+
-                    contrat.getIdClient() + "immatriculation =" +
-                    contrat.getImmatriculation() + "idAgenceDeRetour"+
+            String sqlReq = "UPDATE CONTRAT SET dateDeRetrait = '" +
+                    dateRetrait + "', dateDeRetour ='" +
+                    dateRetour + "',kmRetrait =" +
+                    contrat.getDateRetrait() + ",kmRetour =" +
+                    contrat.getDateRetour() + ",idClient = "+
+                    contrat.getIdClient() + ",immatriculation =" +
+                    contrat.getImmatriculation() + ",idAgenceDeRetour ="+
                     contrat.getIdAgenceRetour() +
                     " WHERE idContrat = " + contrat.getIdContrat();
 

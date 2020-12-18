@@ -79,7 +79,7 @@ public class TypeDaoImpl extends JdbcDao {
         try {
 
 
-            String sqlReq = "UPDATE TYPE SET libelléType = " + type.getLibelléType() + " WHERE idType = " + type.getIdType();
+            String sqlReq = "UPDATE TYPE SET libelléType = '" + type.getLibelléType() + "' WHERE idType = " + type.getIdType();
 
             int res = statement.executeUpdate(sqlReq);
 

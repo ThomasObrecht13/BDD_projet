@@ -59,7 +59,7 @@ public class FactureDaoImpl extends JdbcDao {
         String sqlReq = "insert into FACTURE(idFacture, montant, idContrat) values(?,?,?)";
         try {
             statement = connection.prepareStatement(sqlReq);
-            statement.setInt(1, facture.getIdContrat());
+            statement.setInt(1, facture.getIdFacture());
             statement.setInt(2,facture.getMontant());
             statement.setInt(3, facture.getIdContrat());
 
@@ -82,7 +82,7 @@ public class FactureDaoImpl extends JdbcDao {
         try {
 
             String sqlReq = "UPDATE FACTURE SET montant = " + facture.getMontant() + ", idContrat=" +
-                    facture.getIdContrat() + " WHERE Facture = " + facture.getIdFacture();
+                    facture.getIdContrat() + " WHERE idFacture = " + facture.getIdFacture();
 
             int res = statement.executeUpdate(sqlReq);
 

@@ -80,7 +80,7 @@ public class ModèleDaoImpl extends JdbcDao {
 
         try {
 
-            String sqlReq = "UPDATE MODELE SET dénomination = " + modèle.getDénomination() + ", puissanceFiscale =" +
+            String sqlReq = "UPDATE MODELE SET dénomination = '" + modèle.getDénomination() + "', puissanceFiscale =" +
                     modèle.getPuissanceFiscale() + " WHERE idModèle = " + modèle.getIdModèle();
 
             int res = statement.executeUpdate(sqlReq);
