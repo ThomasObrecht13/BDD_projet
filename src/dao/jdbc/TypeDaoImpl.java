@@ -1,67 +1,64 @@
-package dao.jdbc.jdbc;
+package dao.jdbc;
 
 import dao.exception.DaoException;
 import dao.jdbc.JdbcDao;
 import model.Entity;
-import model.Facture;
+import model.Type;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class FactureDaoImpl extends JdbcDao {
 
-    public FactureDaoImpl(Connection connection){super(connection);}
+public class TypeDaoImpl extends JdbcDao {
+
+    public TypeDaoImpl(Connection connection){super(connection);}
 
     @Override
     public Collection<Entity> findAll() throws DaoException {
-
-        Collection<Entity> factures = new ArrayList<>();
+        Collection<Entity> types = new ArrayList<>();
 
         try {
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM FACTURE");
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM TYPE");
 
             while (resultSet.next()) {
-                Facture facture = new Facture();
-               facture.setIdFacture(resultSet.getInt("idFacture"));
-                facture.setMontant((resultSet.getInt("montant")));
-                facture.setIdContrat(resultSet.getInt("idContrat"));
-                factures.add(facture);
+                Type type = new Type();
+                type.setIdType(resultSet.getInt("idType"));
+                type.setLibelléType(resultSet.getString("libelléType"));
+                types.add(type);
             }
         } catch (SQLException e) {
             throw new DaoException(e);
         }
-        return factures;
+        return types;
     }
 
     @Override
     public Entity findById(int id) throws DaoException {
-        Facture facture = new Facture();
+        Type type = new Type();
         try {
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM FACTURE WHERE idFacture="+id);
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM TYPE WHERE idType="+id);
 
             while (resultSet.next()) {
-                facture.setIdFacture(resultSet.getInt("idFacture"));
-                facture.setMontant((resultSet.getInt("montant")));
-                facture.setIdContrat(resultSet.getInt("idContrat"));
+                type.setIdType(resultSet.getInt("idType"));
+                type.setLibelléType(resultSet.getString("libelléType"));
             }
         } catch (SQLException e) {
             throw new DaoException(e);
         }
-        return facture;
+        return type;
     }
 
     public void create(Entity entity) throws DaoException{
-        Facture facture = (Facture) entity;
+        Type type = (Type) entity;
         PreparedStatement statement = null;
-        String sqlReq = "insert into FACTURE(idFacture, montant, idContrat) values(?,?,?)";
+        String sqlReq = "insert into TYPE(idType , libelléType) values(?,?)";
         try {
             statement = connection.prepareStatement(sqlReq);
-            statement.setInt(1, facture.getIdContrat());
-            statement.setInt(2,facture.getMontant());
-            statement.setInt(3, facture.getIdContrat());
+            statement.setInt(1, type.getIdType());
+            statement.setString(2,type.getLibelléType());
 
             int res = statement.executeUpdate();
 
@@ -75,14 +72,14 @@ public class FactureDaoImpl extends JdbcDao {
 
     public void update(Entity entity) throws DaoException, SQLException {
 
-        Facture facture = (Facture) entity;
+        Type type = (Type) entity;
 
         Statement statement = connection.createStatement();
 
         try {
 
-            String sqlReq = "UPDATE FACTURE SET montant = " + facture.getMontant() + ", idContrat=" +
-                    facture.getIdContrat() + " WHERE Facture = " + facture.getIdFacture();
+
+            String sqlReq = "UPDATE TYPE SET libelléType = " + type.getLibelléType() + " WHERE idType = " + type.getIdType();
 
             int res = statement.executeUpdate(sqlReq);
 
@@ -96,13 +93,13 @@ public class FactureDaoImpl extends JdbcDao {
 
     public void delete(Entity entity) throws DaoException, SQLException {
 
-        Facture facture = (Facture) entity;
+        Type type = (Type)entity;
 
         Statement statement = connection.createStatement();
 
         try {
 
-            String sqlReq = "DELETE FROM FACTURE WHERE idFacture = " + facture.getIdFacture();
+            String sqlReq = "DELETE FROM TYPE WHERE idType = " + type.getIdType();
 
             int res = statement.executeUpdate(sqlReq);
 
@@ -113,6 +110,4 @@ public class FactureDaoImpl extends JdbcDao {
             System.err.println("Erreur SQL : " + e.getLocalizedMessage());
         }
     }
-
-
 }

@@ -1,64 +1,66 @@
-package dao.jdbc.jdbc;
+package dao.jdbc;
 
 import dao.exception.DaoException;
 import dao.jdbc.JdbcDao;
+import model.Catégorie;
 import model.Entity;
-import model.Type;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
+public class CategorieDaoImpl extends JdbcDao {
 
-public class TypeDaoImpl extends JdbcDao {
-
-    public TypeDaoImpl(Connection connection){super(connection);}
+    public CategorieDaoImpl(Connection connection) {
+        super(connection);
+    }
 
     @Override
     public Collection<Entity> findAll() throws DaoException {
-        Collection<Entity> types = new ArrayList<>();
+        Collection<Entity> catégories = new ArrayList<>();
 
         try {
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM TYPE");
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM CATEGORIE");
 
             while (resultSet.next()) {
-                Type type = new Type();
-                type.setIdType(resultSet.getInt("idType"));
-                type.setLibelléType(resultSet.getString("libelléType"));
-                types.add(type);
+                Catégorie catégorie = new Catégorie();
+                catégorie.setIdCatégorie(resultSet.getInt("idCatégorie"));
+                catégorie.setLibelléCatégorie(resultSet.getString("libelléCatégorie"));
+                catégories.add(catégorie);
             }
         } catch (SQLException e) {
             throw new DaoException(e);
         }
-        return types;
+        return catégories;
     }
 
     @Override
     public Entity findById(int id) throws DaoException {
-        Type type = new Type();
+
+        Catégorie catégorie = new Catégorie();
         try {
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM TYPE WHERE idType="+id);
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM CATEGORIE WHERE idCatégorie=" + id);
 
             while (resultSet.next()) {
-                type.setIdType(resultSet.getInt("idType"));
-                type.setLibelléType(resultSet.getString("libelléType"));
+                catégorie.setIdCatégorie(resultSet.getInt("idCatégorie"));
+                catégorie.setLibelléCatégorie(resultSet.getString("libelléCatégorie"));
             }
         } catch (SQLException e) {
             throw new DaoException(e);
         }
-        return type;
+        return catégorie;
     }
 
-    public void create(Entity entity) throws DaoException{
-        Type type = (Type) entity;
+    public void create(Entity entity) throws DaoException {
+        Catégorie catégorie = (Catégorie) entity;
         PreparedStatement statement = null;
-        String sqlReq = "insert into TYPE(idType , libelléType) values(?,?)";
+        String sqlReq = "insert into CATEGORIE(idCatégorie , libelléCatégorie) values(?,?)";
         try {
             statement = connection.prepareStatement(sqlReq);
-            statement.setInt(1, type.getIdType());
-            statement.setString(2,type.getLibelléType());
+            statement.setInt(1, catégorie.getIdCatégorie());
+            statement.setString(2, catégorie.getLibelléCatégorie());
 
             int res = statement.executeUpdate();
 
@@ -72,14 +74,15 @@ public class TypeDaoImpl extends JdbcDao {
 
     public void update(Entity entity) throws DaoException, SQLException {
 
-        Type type = (Type) entity;
+        Catégorie catégorie = (Catégorie) entity;
 
         Statement statement = connection.createStatement();
 
         try {
 
 
-            String sqlReq = "UPDATE TYPE SET libelléType = " + type.getLibelléType() + " WHERE idType = " + type.getIdType();
+            String sqlReq = "UPDATE CATEGORIE SET libelléCatégorie = " +
+                    catégorie.getLibelléCatégorie() + " WHERE idCatégorie = " + catégorie.getIdCatégorie();
 
             int res = statement.executeUpdate(sqlReq);
 
@@ -93,13 +96,13 @@ public class TypeDaoImpl extends JdbcDao {
 
     public void delete(Entity entity) throws DaoException, SQLException {
 
-        Type type = (Type)entity;
+        Catégorie catégorie = (Catégorie) entity;
 
         Statement statement = connection.createStatement();
 
         try {
 
-            String sqlReq = "DELETE FROM TYPE WHERE idType = " + type.getIdType();
+            String sqlReq = "DELETE FROM CATEGORIE WHERE idCatégorie = " + catégorie.getIdCatégorie();
 
             int res = statement.executeUpdate(sqlReq);
 

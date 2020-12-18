@@ -1,65 +1,67 @@
-package dao.jdbc.jdbc;
+package dao.jdbc;
 
 import dao.exception.DaoException;
 import dao.jdbc.JdbcDao;
 import model.Entity;
-import
+import model.Facture;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class ModèleDaoImpl extends JdbcDao {
+public class FactureDaoImpl extends JdbcDao {
 
-    public ModèleDaoImpl(Connection connection){super(connection);}
+    public FactureDaoImpl(Connection connection){super(connection);}
 
     @Override
     public Collection<Entity> findAll() throws DaoException {
 
-        Collection<Entity> modèles = new ArrayList<>();
+        Collection<Entity> factures = new ArrayList<>();
 
         try {
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM MODELE");
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM FACTURE");
 
             while (resultSet.next()) {
-                Modèle modèle = new Modèle();
-                modèle.setIdModèle(resultSet.getInt("idModèle"));
-                modèle.setDénomination((resultSet.getString("dénomination")));
-                modèle.setPuissanceFiscale(resultSet.getInt("puissanceFiscale"));
-                modèles.add(modèle);
+                Facture facture = new Facture();
+               facture.setIdFacture(resultSet.getInt("idFacture"));
+                facture.setMontant((resultSet.getInt("montant")));
+                facture.setIdContrat(resultSet.getInt("idContrat"));
+                factures.add(facture);
             }
         } catch (SQLException e) {
             throw new DaoException(e);
         }
-        return modèles;
+        return factures;
     }
+
     @Override
     public Entity findById(int id) throws DaoException {
-        Modèle modèle = new Modèle();
+        Facture facture = new Facture();
         try {
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM MODELE WHERE idModèle="+id);
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM FACTURE WHERE idFacture="+id);
 
             while (resultSet.next()) {
-                modèle.setIdModèle(resultSet.getInt("idModèle"));
-                modèle.setDénomination(resultSet.getString("dénomination"));
-                modèle.setPuissanceFiscale(resultSet.getInt("puissanceFiscale"));
+                facture.setIdFacture(resultSet.getInt("idFacture"));
+                facture.setMontant((resultSet.getInt("montant")));
+                facture.setIdContrat(resultSet.getInt("idContrat"));
             }
         } catch (SQLException e) {
             throw new DaoException(e);
         }
-        return modèle;
+        return facture;
     }
 
     public void create(Entity entity) throws DaoException{
-        Modèle modèle = (Modèle) entity;
+        Facture facture = (Facture) entity;
         PreparedStatement statement = null;
-        String sqlReq = "insert into MODELE(idModèle , dénomination, puissanceFiscale) values(?,?,?)";
+        String sqlReq = "insert into FACTURE(idFacture, montant, idContrat) values(?,?,?)";
         try {
             statement = connection.prepareStatement(sqlReq);
-            statement.setInt(1, modèle.getIdModèle());
-            statement.setString(2,modèle.getDénomination());
-            statement.setInt(3, modèle.getPuissanceFiscale());
+            statement.setInt(1, facture.getIdContrat());
+            statement.setInt(2,facture.getMontant());
+            statement.setInt(3, facture.getIdContrat());
 
             int res = statement.executeUpdate();
 
@@ -71,17 +73,16 @@ public class ModèleDaoImpl extends JdbcDao {
         }
     }
 
-
     public void update(Entity entity) throws DaoException, SQLException {
 
-        Modèle modèle = (Modèle) entity;
+        Facture facture = (Facture) entity;
 
         Statement statement = connection.createStatement();
 
         try {
 
-            String sqlReq = "UPDATE MODELE SET dénomination = " + modèle.getDénomination() + ", puissanceFiscale =" +
-                    modèle.getPuissanceFiscale() + " WHERE idModèle = " + modèle.getIdModèle();
+            String sqlReq = "UPDATE FACTURE SET montant = " + facture.getMontant() + ", idContrat=" +
+                    facture.getIdContrat() + " WHERE Facture = " + facture.getIdFacture();
 
             int res = statement.executeUpdate(sqlReq);
 
@@ -93,16 +94,15 @@ public class ModèleDaoImpl extends JdbcDao {
         }
     }
 
-
     public void delete(Entity entity) throws DaoException, SQLException {
 
-       Modèle modèle = (Modèle) entity;
+        Facture facture = (Facture) entity;
 
         Statement statement = connection.createStatement();
 
         try {
 
-            String sqlReq = "DELETE FROM MODELE WHERE idModèle = " + modèle.getIdModèle();
+            String sqlReq = "DELETE FROM FACTURE WHERE idFacture = " + facture.getIdFacture();
 
             int res = statement.executeUpdate(sqlReq);
 
@@ -113,4 +113,6 @@ public class ModèleDaoImpl extends JdbcDao {
             System.err.println("Erreur SQL : " + e.getLocalizedMessage());
         }
     }
+
+
 }

@@ -1,66 +1,65 @@
-package dao.jdbc.jdbc;
+package dao.jdbc;
 
 import dao.exception.DaoException;
 import dao.jdbc.JdbcDao;
-import model.Catégorie;
 import model.Entity;
-
+import model
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class CategorieDaoImpl extends JdbcDao {
+public class ModèleDaoImpl extends JdbcDao {
 
-    public CategorieDaoImpl(Connection connection) {
-        super(connection);
-    }
+    public ModèleDaoImpl(Connection connection){super(connection);}
 
     @Override
     public Collection<Entity> findAll() throws DaoException {
-        Collection<Entity> catégories = new ArrayList<>();
+
+        Collection<Entity> modèles = new ArrayList<>();
 
         try {
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM CATEGORIE");
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM MODELE");
 
             while (resultSet.next()) {
-                Catégorie catégorie = new Catégorie();
-                catégorie.setIdCatégorie(resultSet.getInt("idCatégorie"));
-                catégorie.setLibelléCatégorie(resultSet.getString("libelléCatégorie"));
-                catégories.add(catégorie);
+                Modèle modèle = new Modèle();
+                modèle.setIdModèle(resultSet.getInt("idModèle"));
+                modèle.setDénomination((resultSet.getString("dénomination")));
+                modèle.setPuissanceFiscale(resultSet.getInt("puissanceFiscale"));
+                modèles.add(modèle);
             }
         } catch (SQLException e) {
             throw new DaoException(e);
         }
-        return catégories;
+        return modèles;
     }
-
     @Override
     public Entity findById(int id) throws DaoException {
-
-        Catégorie catégorie = new Catégorie();
+        Modèle modèle = new Modèle();
         try {
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM CATEGORIE WHERE idCatégorie=" + id);
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM MODELE WHERE idModèle="+id);
 
             while (resultSet.next()) {
-                catégorie.setIdCatégorie(resultSet.getInt("idCatégorie"));
-                catégorie.setLibelléCatégorie(resultSet.getString("libelléCatégorie"));
+                modèle.setIdModèle(resultSet.getInt("idModèle"));
+                modèle.setDénomination(resultSet.getString("dénomination"));
+                modèle.setPuissanceFiscale(resultSet.getInt("puissanceFiscale"));
             }
         } catch (SQLException e) {
             throw new DaoException(e);
         }
-        return catégorie;
+        return modèle;
     }
 
-    public void create(Entity entity) throws DaoException {
-        Catégorie catégorie = (Catégorie) entity;
+    public void create(Entity entity) throws DaoException{
+        Modèle modèle = (Modèle) entity;
         PreparedStatement statement = null;
-        String sqlReq = "insert into CATEGORIE(idCatégorie , libelléCatégorie) values(?,?)";
+        String sqlReq = "insert into MODELE(idModèle , dénomination, puissanceFiscale) values(?,?,?)";
         try {
             statement = connection.prepareStatement(sqlReq);
-            statement.setInt(1, catégorie.getIdCatégorie());
-            statement.setString(2, catégorie.getLibelléCatégorie());
+            statement.setInt(1, modèle.getIdModèle());
+            statement.setString(2,modèle.getDénomination());
+            statement.setInt(3, modèle.getPuissanceFiscale());
 
             int res = statement.executeUpdate();
 
@@ -72,17 +71,17 @@ public class CategorieDaoImpl extends JdbcDao {
         }
     }
 
+
     public void update(Entity entity) throws DaoException, SQLException {
 
-        Catégorie catégorie = (Catégorie) entity;
+        Modèle modèle = (Modèle) entity;
 
         Statement statement = connection.createStatement();
 
         try {
 
-
-            String sqlReq = "UPDATE CATEGORIE SET libelléCatégorie = " +
-                    catégorie.getLibelléCatégorie() + " WHERE idCatégorie = " + catégorie.getIdCatégorie();
+            String sqlReq = "UPDATE MODELE SET dénomination = " + modèle.getDénomination() + ", puissanceFiscale =" +
+                    modèle.getPuissanceFiscale() + " WHERE idModèle = " + modèle.getIdModèle();
 
             int res = statement.executeUpdate(sqlReq);
 
@@ -94,15 +93,16 @@ public class CategorieDaoImpl extends JdbcDao {
         }
     }
 
+
     public void delete(Entity entity) throws DaoException, SQLException {
 
-        Catégorie catégorie = (Catégorie) entity;
+       Modèle modèle = (Modèle) entity;
 
         Statement statement = connection.createStatement();
 
         try {
 
-            String sqlReq = "DELETE FROM CATEGORIE WHERE idCatégorie = " + catégorie.getIdCatégorie();
+            String sqlReq = "DELETE FROM MODELE WHERE idModèle = " + modèle.getIdModèle();
 
             int res = statement.executeUpdate(sqlReq);
 
